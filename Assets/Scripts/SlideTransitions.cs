@@ -26,7 +26,7 @@ public class SlideTransitions : MonoBehaviour
 			slides.Add(child);
         }
 
-		// places current and next slides in containers
+		// places current slides in container
 		slides[0].gameObject.SetActive(true);
 		slides[0].SetParent(CurrentSlideContainer);
 
@@ -38,6 +38,7 @@ public class SlideTransitions : MonoBehaviour
 			modelRotation.model = model;
 		}
 
+		// places next slide in container
 		slides[1].SetParent(NextSlidesContainer);
 	}
 
@@ -72,9 +73,13 @@ public class SlideTransitions : MonoBehaviour
 		// disable animator to stop it from fucking stuff up
 		animator.enabled = false;
 
-		// place old slide in regular container
+		// place old slide in regular container and deactivate
 		slides[currentSlide].SetParent(SlidesContainer);
 		slides[currentSlide].gameObject.SetActive(false);
+
+		// reset position
+		CurrentSlideContainer.position = Vector3.zero;
+		slides[currentSlide].position = Vector3.zero;
 
 		// increment slide
 		currentSlide++;
@@ -87,6 +92,8 @@ public class SlideTransitions : MonoBehaviour
 
 		// place new slide in current container
 		slides[currentSlide].SetParent(CurrentSlideContainer);
+
+		// reset position
 		CurrentSlideContainer.position = Vector3.zero;
 		slides[currentSlide].position = Vector3.zero;
 
