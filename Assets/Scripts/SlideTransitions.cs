@@ -23,26 +23,55 @@ public class SlideTransitions : MonoBehaviour
 		// gets all slides (currently children of slides container
 		for (int i = 0; i < SlidesContainer.childCount; i++) {
             Transform child = SlidesContainer.GetChild(i);
-            child.name = "Slide";
 			slides.Add(child);
         }
 
 		// places current and next slides in containers
 		slides[0].gameObject.SetActive(true);
-		modelRotation.target = slides[0];
 		slides[0].SetParent(CurrentSlideContainer);
+
+		// set rotation model
+		Transform model = slides[0].Find("Model");
+
+		if (!!model)
+		{
+			modelRotation.model = model;
+		}
 
 		slides[1].SetParent(NextSlidesContainer);
 	}
 
     public void Transition()
-    {
-        // tell animator to begin transition animation
-        animator.SetTrigger("transition");
-    }
+	{
+		// no rotations during transition
+		modelRotation.model = null;
+
+		// renable animator for transition
+		animator.enabled = true;
+
+		// show next slide
+		slides[currentSlide].position = Vector3.zero;
+
+		// make sure next slide isn't out of list bounds
+		if (currentSlide + 1 < slides.Count)
+		{
+			slides[currentSlide + 1].gameObject.SetActive(true);
+		}
+		else
+		{
+			// if out of bounds, the next slide is the first slide
+			slides[0].gameObject.SetActive(true);
+		}
+
+		// tell animator to begin transition animation
+		animator.SetTrigger("transition");
+	}
 
 	public void OnTransitionFinish()
 	{
+		// disable animator to stop it from fucking stuff up
+		animator.enabled = false;
+
 		// place old slide in regular container
 		slides[currentSlide].SetParent(SlidesContainer);
 		slides[currentSlide].gameObject.SetActive(false);
@@ -58,6 +87,8 @@ public class SlideTransitions : MonoBehaviour
 
 		// place new slide in current container
 		slides[currentSlide].SetParent(CurrentSlideContainer);
+		CurrentSlideContainer.position = Vector3.zero;
+		slides[currentSlide].position = Vector3.zero;
 
 		// make sure next slide isn't out of list bounds
 		if (currentSlide + 1 < slides.Count)
@@ -68,6 +99,14 @@ public class SlideTransitions : MonoBehaviour
 		{
 			// if out of bounds, the next slide is the first slide
 			slides[0].SetParent(NextSlidesContainer);
+		}
+
+		// set rotation model
+		Transform model = slides[currentSlide].Find("Model");
+
+		if (!!model)
+		{
+			modelRotation.model = model;
 		}
 	}
 }

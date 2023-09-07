@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ModelRotation : MonoBehaviour
 {
-	public Transform target;
+	public Transform model;
 	public float rotationSpeed = 150f;
 
 	Vector3 lastMousePosition;
@@ -14,6 +14,12 @@ public class ModelRotation : MonoBehaviour
 
 	void Update()
 	{
+		// handle lack of model
+		if (!model)
+		{
+			return;
+		}
+
 		Vector2 rotation = new Vector2();
 
 		// get mouse input
@@ -30,17 +36,11 @@ public class ModelRotation : MonoBehaviour
 			// get keyboard input
 			rotation.x = -Input.GetAxis("Horizontal") * rotationSpeed * Time.deltaTime;
 			rotation.y = Input.GetAxis("Vertical") * rotationSpeed * Time.deltaTime;
-		}
+		}		
 
-		// handle lack of target
-		if (!target)
-		{
-			return;
-		}
-
-		// rotate target (I used RotateAround because originally, the camera rotated around it, but for some weird fucking reason, Rotate had issues, so whatever)
-		target.RotateAround(target.position, transform.up, rotation.x);
-		target.RotateAround(target.position, transform.right, rotation.y);
+		// rotate model (I used RotateAround because originally, the camera rotated around it, but for some weird fucking reason, Rotate had issues, so whatever)
+		model.RotateAround(model.position, transform.up, rotation.x);
+		model.RotateAround(model.position, transform.right, rotation.y);
 
 		// update last mouse position
 		lastMousePosition = Input.mousePosition;
